@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register — Amrita Library</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        h1 {
+            color: #f8fafc;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+            text-shadow: 2px 4px 10px rgba(0,0,0,0.3);
+            font-weight: 700;
+        }
+
+        /* same card as login */
+        .regcard {
+            background-color: #ffffff;
+            padding: 36px 40px;
+            border-radius: 12px;
+            width: 360px;
+            text-align: center;
+            box-shadow: 0px 10px 25px rgba(0,0,0,0.2);
+            border-top: 8px solid #800000;
+        }
+
+        h3 { color: #334155; margin-bottom: 5px; }
+
+        /* all inputs same as login */
+        input, select {
+            margin-bottom: 4px;
+            padding: 10px;
+            width: 85%;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.9rem;
+            color: #1e293b;
+            background: #fff;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #800000;
+            box-shadow: 0 0 5px rgba(128, 0, 0, 0.2);
+        }
+
+        label {
+            font-family: 'Segoe UI', sans-serif;
+            color: #475569;
+            font-size: 0.9rem;
+            display: block;
+            margin-bottom: 5px;
+            text-align: left;
+            margin-left: 7%;
+        }
+
+        .button {
+            background-color: #800000;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-weight: bold;
+            width: 95%;
+            cursor: pointer;
+            border: none;
+            transition: background 0.3s ease;
+            margin-top: 6px;
+        }
+
+        .button:hover {
+            background-color: #a00000;
+            box-shadow: 0px 4px 12px rgba(128, 0, 0, 0.3);
+        }
+
+        img {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 220px;
+            filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.2));
+        }
+
+        /* ── Password strength (same as login) ── */
+        .pwd-wrap {
+            position: relative;
+            width: 85%;
+            margin: 0 auto;
+        }
+
+        .pwd-wrap input {
+            width: 100%;
+            margin-bottom: 6px;
+            padding-right: 36px;
+        }
+
+        .eye-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #94a3b8;
+            padding: 0;
+        }
+
+        .strength-bar-wrap {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+
+        .strength-seg {
+            flex: 1;
+            height: 4px;
+            border-radius: 2px;
+            background: #e2e8f0;
+            transition: background 0.3s;
+        }
+
+        .strength-label {
+            font-size: 0.75rem;
+            text-align: left;
+            margin-bottom: 6px;
+            min-height: 16px;
+            color: #64748b;
+        }
+
+        .pwd-suggestion {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 0.75rem;
+            color: #92400e;
+            text-align: left;
+            margin-bottom: 10px;
+            display: none;
+            line-height: 1.5;
+        }
+
+        .pwd-suggestion ul { margin: 4px 0 0 14px; padding: 0; }
+
+        /* ── Field-level error hints ── */
+        .field-err {
+            font-size: 0.73rem;
+            color: #dc2626;
+            text-align: left;
+            margin-left: 7%;
+            margin-bottom: 8px;
+            min-height: 14px;
+            display: block;
+        }
+
+        /* ── Success toast ── */
+        .toast {
+            display: none;
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #15803d;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        /* ── Login link ── */
+        .login-link {
+            margin-top: 14px;
+            font-size: 0.82rem;
+            color: #64748b;
+        }
+
+        .login-link a {
+            color: #800000;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .login-link a:hover { text-decoration: underline; }
+
+        /* ── Phone counter ── */
+        .phone-row {
+            position: relative;
+            width: 85%;
+            margin: 0 auto;
+        }
+
+        .phone-row input { width: 100%; }
+
+        .phone-counter {
+            position: absolute;
+            right: 10px;
+            top: 11px;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <img src="c:\Users\jayad\Downloads\Amrita-vishwa-vidyapeetham-color-logo.webp" alt="amrita logo">
+
+    <h1>LIBRARY MANAGEMENT SYSTEM</h1>
+
+    <div class="regcard">
+        <h3><strong>Create Account</strong></h3>
+        <p style="color:#64748b;font-size:14px;margin-bottom:16px;">Fill in your details to register</p>
+
+        <div class="toast" id="successToast">
+            ✅ <strong>Registered successfully!</strong><br>
+            Your Login ID: <strong id="generatedId"></strong> — redirecting to login…
+        </div>
+
+        <!-- Full Name -->
+        <label for="fullname">Full Name</label>
+        <input type="text" id="fullname" placeholder="Enter your full name"
+               oninput="clearErr('nameErr')" autocomplete="name">
+        <span class="field-err" id="nameErr"></span>
+
+        <!-- Student / Employee ID -->
+        <label for="regId">Login ID</label>
+        <input type="text" id="regId" placeholder="e.g. STUDENT1023"
+               oninput="clearErr('idErr')" autocomplete="username">
+        <span class="field-err" id="idErr"></span>
+
+        <!-- Email -->
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="your@email.com"
+               oninput="clearErr('emailErr')" autocomplete="email">
+        <span class="field-err" id="emailErr"></span>
+
+        <!-- Phone — maxlength=10 -->
+        <label for="phone">Phone Number</label>
+        <div class="phone-row">
+            <input type="tel" id="phone" placeholder="10-digit mobile number"
+                   maxlength="10" oninput="phoneInput(this)" autocomplete="tel">
+            <span class="phone-counter" id="phoneCounter">0/10</span>
+        </div>
+        <span class="field-err" id="phoneErr"></span>
+
+        <!-- Department -->
+        <label for="dept">Department</label>
+        <select id="dept" style="margin-bottom:4px;">
+            <option value="">— Select Department —</option>
+            <option>Computer Science &amp; Engineering</option>
+            <option>Artificial Intelligence &amp; Engineering</option>
+            <option>Electronics &amp; Communication</option>
+            <option>Mechanical Engineering</option>
+            <option>Civil Engineering</option>
+            <option>Information Technology</option>
+            <option>Mathematics &amp; Science</option>
+            <option>Other</option>
+        </select>
+        <span class="field-err" id="deptErr"></span>
+
+        <!-- Year -->
+        <label for="year">Academic Year</label>
+        <select id="year" style="margin-bottom:4px;">
+            <option value="">— Select Year —</option>
+            <option>1st Year</option>
+            <option>2nd Year</option>
+            <option>3rd Year</option>
+            <option>4th Year</option>
+            <option>PG / Research</option>
+        </select>
+        <span class="field-err" id="yearErr"></span>
+
+        <!-- Password with strength -->
+        <label for="regPwd">Password</label>
+        <div class="pwd-wrap">
+            <input type="password" id="regPwd" placeholder="Create a strong password"
+                   oninput="checkStrength(this.value)" autocomplete="new-password">
+            <button class="eye-btn" type="button" onclick="toggleEye('regPwd','eye1')" id="eye1">👁</button>
+            <div class="strength-bar-wrap">
+                <div class="strength-seg" id="seg1"></div>
+                <div class="strength-seg" id="seg2"></div>
+                <div class="strength-seg" id="seg3"></div>
+                <div class="strength-seg" id="seg4"></div>
+            </div>
+            <div class="strength-label" id="strengthLabel"></div>
+            <div class="pwd-suggestion" id="pwdSuggestion">
+                <strong>💡 Suggested strong password:</strong>
+                <span id="suggestedPwd" style="cursor:pointer;text-decoration:underline;color:#800000"
+                      onclick="useSuggested()" title="Click to use this password"></span>
+                <br>
+                <span style="color:#6b7280;font-size:0.72rem;">Click the suggestion to auto-fill. Must include:</span>
+                <ul id="failList"></ul>
+            </div>
+        </div>
+        <span class="field-err" id="pwdErr"></span>
+
+        <!-- Confirm Password -->
+        <label for="confirmPwd">Confirm Password</label>
+        <div class="pwd-wrap">
+            <input type="password" id="confirmPwd" placeholder="Re-enter your password"
+                   oninput="checkMatch()" autocomplete="new-password">
+            <button class="eye-btn" type="button" onclick="toggleEye('confirmPwd','eye2')" id="eye2">👁</button>
+        </div>
+        <span class="field-err" id="confirmErr"></span>
+
+        <button class="button" type="button" onclick="handleRegister()">Register</button>
+
+        <div class="login-link">
+            Already have an account? <a href="login.html">Login here</a>
+        </div>
+    </div>
+
+    <p style="color: rgba(255,255,255,0.6); text-align: end; font-size: 13px; position: absolute; bottom: 10px; right: 20px;">
+        © 2026 | Amrita Vishwa Vidyapeetham
+    </p>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   ALGORITHM 1 — Password Strength Checker (rule scoring)
+   Time complexity: O(k) where k = number of rules (constant)
+   ══════════════════════════════════════════════════════════ */
+const RULES = [
+    { label: "At least 8 characters",                       test: p => p.length >= 8 },
+    { label: "At least one uppercase letter (A–Z)",         test: p => /[A-Z]/.test(p) },
+    { label: "At least one lowercase letter (a–z)",         test: p => /[a-z]/.test(p) },
+    { label: "At least one number (0–9)",                   test: p => /[0-9]/.test(p) },
+    { label: "At least one special character (@#$!%*?&)",   test: p => /[@#$!%*?&^()_\-+=]/.test(p) },
+];
+
+const COLORS = ["", "#ef4444", "#f97316", "#eab308", "#22c55e"];
+const LABELS = ["", "Weak ✗", "Fair", "Good", "Strong ✓"];
+
+function checkStrength(pwd) {
+    if (!pwd) { resetBar(); document.getElementById("pwdSuggestion").style.display = "none"; return; }
+
+    const passed = RULES.filter(r => r.test(pwd));
+    const failed = RULES.filter(r => !r.test(pwd));
+    const score  = Math.min(passed.length, 4);
+
+    for (let i = 1; i <= 4; i++) {
+        document.getElementById("seg" + i).style.background = i <= score ? COLORS[score] : "#e2e8f0";
+    }
+    const lbl = document.getElementById("strengthLabel");
+    lbl.textContent = score > 0 ? `Strength: ${LABELS[score]}` : "";
+    lbl.style.color = COLORS[score] || "#64748b";
+
+    const box = document.getElementById("pwdSuggestion");
+    if (score < 4) {
+        box.style.display = "block";
+        document.getElementById("suggestedPwd").textContent = generateStrongPassword();
+        document.getElementById("failList").innerHTML = failed.map(r => `<li>${r.label}</li>`).join("");
+    } else {
+        box.style.display = "none";
+    }
+}
+
+function resetBar() {
+    for (let i = 1; i <= 4; i++) document.getElementById("seg" + i).style.background = "#e2e8f0";
+    document.getElementById("strengthLabel").textContent = "";
+}
+
+/* ══════════════════════════════════════════════════════════
+   ALGORITHM 2 — Secure Password Generator
+   Guarantees one of each class, then Fisher-Yates shuffle
+   ══════════════════════════════════════════════════════════ */
+function generateStrongPassword() {
+    const upper   = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+    const lower   = "abcdefghjkmnpqrstuvwxyz";
+    const digits  = "23456789";
+    const special = "@#$!%*?&";
+    const all     = upper + lower + digits + special;
+
+    let chars = [
+        upper[rnd(upper.length)], upper[rnd(upper.length)],
+        lower[rnd(lower.length)], lower[rnd(lower.length)],
+        digits[rnd(digits.length)],
+        special[rnd(special.length)],
+    ];
+    while (chars.length < 12) chars.push(all[rnd(all.length)]);
+
+    // Fisher-Yates shuffle
+    for (let i = chars.length - 1; i > 0; i--) {
+        const j = rnd(i + 1);
+        [chars[i], chars[j]] = [chars[j], chars[i]];
+    }
+    return chars.join("");
+}
+
+function rnd(n) { return Math.floor(Math.random() * n); }
+
+// Click to auto-fill suggested password
+function useSuggested() {
+    const pwd = document.getElementById("suggestedPwd").textContent;
+    document.getElementById("regPwd").type     = "text";
+    document.getElementById("regPwd").value    = pwd;
+    document.getElementById("eye1").textContent = "🙈";
+    checkStrength(pwd);
+    checkMatch();
+}
+
+/* ══════════════════════════════════════════════════════════
+   ALGORITHM 3 — Form Validation (linear scan of rules)
+   Returns array of errors; empty = valid
+   ══════════════════════════════════════════════════════════ */
+function validate() {
+    let valid = true;
+
+    const name    = document.getElementById("fullname").value.trim();
+    const id      = document.getElementById("regId").value.trim();
+    const email   = document.getElementById("email").value.trim();
+    const phone   = document.getElementById("phone").value.trim();
+    const dept    = document.getElementById("dept").value;
+    const year    = document.getElementById("year").value;
+    const pwd     = document.getElementById("regPwd").value;
+    const confirm = document.getElementById("confirmPwd").value;
+
+    // Name: at least 2 words
+    if (name.split(" ").filter(Boolean).length < 2) {
+        setErr("nameErr", "Please enter your full name (first & last).");
+        valid = false;
+    }
+
+    // Login ID: non-empty, alphanumeric
+    if (!id || !/^[A-Za-z0-9_]+$/.test(id)) {
+        setErr("idErr", "Login ID must be alphanumeric with no spaces.");
+        valid = false;
+    } else {
+        // Duplicate check — linear search O(n)
+        const users = JSON.parse(localStorage.getItem("lms_users") || "[]");
+        if (users.find(u => u.loginId === id)) {
+            setErr("idErr", "This Login ID is already taken.");
+            valid = false;
+        }
+    }
+
+    // Email
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setErr("emailErr", "Please enter a valid email address.");
+        valid = false;
+    }
+
+    // Phone: exactly 10 digits
+    if (!/^\d{10}$/.test(phone)) {
+        setErr("phoneErr", "Phone number must be exactly 10 digits.");
+        valid = false;
+    }
+
+    if (!dept) { setErr("deptErr", "Please select your department."); valid = false; }
+    if (!year) { setErr("yearErr", "Please select your academic year."); valid = false; }
+
+    // Password strength: must pass all rules
+    const pwdFailed = RULES.filter(r => !r.test(pwd));
+    if (pwdFailed.length > 0) {
+        setErr("pwdErr", "Password is too weak. Follow the strength guide above.");
+        valid = false;
+    }
+
+    if (pwd !== confirm) {
+        setErr("confirmErr", "Passwords do not match.");
+        valid = false;
+    }
+
+    return valid;
+}
+
+function setErr(id, msg)   { document.getElementById(id).textContent = msg; }
+function clearErr(id)      { document.getElementById(id).textContent = ""; }
+
+/* ══════════════════════════════════════════════════════════
+   ALGORITHM 4 — Registration Save + Duplicate Guard
+   Stores user object to localStorage array
+   ══════════════════════════════════════════════════════════ */
+function handleRegister() {
+    // Clear all previous errors first
+    ["nameErr","idErr","emailErr","phoneErr","deptErr","yearErr","pwdErr","confirmErr"]
+        .forEach(clearErr);
+
+    if (!validate()) return;
+
+    const newUser = {
+        loginId:    document.getElementById("regId").value.trim(),
+        password:   document.getElementById("regPwd").value,
+        name:       document.getElementById("fullname").value.trim(),
+        email:      document.getElementById("email").value.trim(),
+        phone:      document.getElementById("phone").value.trim(),
+        dept:       document.getElementById("dept").value,
+        year:       document.getElementById("year").value,
+        registered: new Date().toLocaleDateString("en-IN"),
+    };
+
+    const users = JSON.parse(localStorage.getItem("lms_users") || "[]");
+    users.push(newUser);
+    localStorage.setItem("lms_users", JSON.stringify(users));
+
+    // Show success toast
+    document.getElementById("generatedId").textContent = newUser.loginId;
+    document.getElementById("successToast").style.display = "block";
+    document.querySelector(".button").disabled = true;
+
+    setTimeout(() => window.location.href = "login.html", 2200);
+}
+
+/* ══════════════════════════════════════════════════════════
+   ALGORITHM 5 — Phone Input Filter
+   Strips non-digits in real time, enforces maxlength=10
+   ══════════════════════════════════════════════════════════ */
+function phoneInput(el) {
+    el.value = el.value.replace(/\D/g, "").slice(0, 10);
+    document.getElementById("phoneCounter").textContent = el.value.length + "/10";
+    clearErr("phoneErr");
+}
+
+/* ══════════════════════════════════════════════════════════
+   ALGORITHM 6 — Password Match Checker (real-time)
+   ══════════════════════════════════════════════════════════ */
+function checkMatch() {
+    const p = document.getElementById("regPwd").value;
+    const c = document.getElementById("confirmPwd").value;
+    if (!c) { clearErr("confirmErr"); return; }
+    if (p !== c) setErr("confirmErr", "Passwords do not match.");
+    else         clearErr("confirmErr");
+}
+
+/* Eye toggles */
+function toggleEye(inputId, btnId) {
+    const inp = document.getElementById(inputId);
+    const btn = document.getElementById(btnId);
+    if (inp.type === "password") { inp.type = "text";     btn.textContent = "🙈"; }
+    else                         { inp.type = "password"; btn.textContent = "👁";  }
+}
+</script>
+</body>
+</html>
