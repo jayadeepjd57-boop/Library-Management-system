@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amrita Library — Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --blue:    #3b82f6;
+            --green:   #16a34a;
+            --red:     #dc2626;
+            --gold:    #d97706;
+            --primary: #667eea;
+            --dark:    #0f172a;
+            --border:  #e2e8f0;
+            --muted:   #64748b;
+            --text:    #1e293b;
+        }
+
+        body { font-family:'Crimson Pro',Georgia,serif; background:#f0f4ff; color:var(--text); margin:0; }
+
+        /* TOPNAV */
+        .topnav {
+            background:linear-gradient(90deg,#3b82f6,#1d4ed8);
+            padding:0 28px; height:60px;
+            display:flex; justify-content:space-between; align-items:center;
+            box-shadow:0 4px 16px rgba(59,130,246,0.35);
+            position:sticky; top:0; z-index:100;
+        }
+        .topnav .brand { font-family:'Cinzel',serif; color:white; font-size:1.1rem; letter-spacing:3px; display:flex; align-items:center; gap:10px; }
+        .topnav .nav-links a { color:rgba(255,255,255,0.85); text-decoration:none; margin-left:16px; padding:6px 14px; border-radius:6px; font-size:0.9rem; transition:all 0.2s; }
+        .topnav .nav-links a:hover { background:rgba(255,255,255,0.18); color:white; }
+        .topnav .nav-links a.logout { background:rgba(220,38,38,0.3); color:#fca5a5; }
+        .topnav .nav-links a.logout:hover { background:rgba(220,38,38,0.6); color:white; }
+
+        .container { max-width:900px; margin:36px auto; padding:0 20px 60px; }
+
+        /* PROFILE HERO */
+        .profile-hero {
+            background:linear-gradient(135deg,#1e3a5f 0%,#0f172a 100%);
+            border-radius:18px; padding:36px 40px;
+            display:flex; align-items:center; gap:28px; margin-bottom:28px;
+            box-shadow:0 10px 40px rgba(0,0,0,0.2); position:relative; overflow:hidden;
+        }
+        .profile-hero::before {
+            content:''; position:absolute; width:300px; height:300px; border-radius:50%;
+            background:radial-gradient(circle,rgba(59,130,246,0.15),transparent); top:-100px; right:-60px;
+        }
+        .avatar { width:80px; height:80px; background:linear-gradient(135deg,#3b82f6,#1d4ed8); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; color:white; flex-shrink:0; border:3px solid rgba(255,255,255,0.15); }
+        .profile-info { flex:1; }
+        .profile-info h2 { font-family:'Cinzel',serif; color:white; font-size:1.4rem; letter-spacing:2px; }
+        .profile-info p { color:#93c5fd; font-size:0.9rem; margin-top:4px; }
+        .profile-badges { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+        .pbadge { background:rgba(255,255,255,0.1); color:#e2e8f0; font-size:0.78rem; padding:4px 12px; border-radius:999px; letter-spacing:0.5px; }
+
+        /* LIVE CLOCK */
+        .live-time { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:8px 16px; color:#a5f3fc; font-family:'Cinzel',serif; font-size:0.8rem; letter-spacing:2px; margin-top:10px; display:inline-block; }
+
+        /* FINE ALERT */
+        .fine-alert { background:#fff7ed; border:1px solid #fed7aa; border-left:4px solid #f97316; border-radius:12px; padding:16px 20px; margin-bottom:24px; display:flex; align-items:center; gap:14px; }
+        .fine-alert .alert-icon { font-size:1.6rem; }
+        .fine-alert .alert-text strong { display:block; color:#c2410c; font-family:'Cinzel',serif; letter-spacing:1px; font-size:0.95rem; }
+        .fine-alert .alert-text span { color:#9a3412; font-size:0.9rem; }
+
+        /* CARDS */
+        .card { background:white; border-radius:14px; padding:24px 28px; margin-bottom:24px; box-shadow:0 4px 20px rgba(0,0,0,0.07); border:1px solid var(--border); }
+        .card-title { font-family:'Cinzel',serif; font-size:1rem; letter-spacing:2px; color:var(--text); margin-bottom:18px; padding-bottom:12px; border-bottom:2px solid #f1f5f9; display:flex; align-items:center; gap:8px; }
+
+        /* INFO GRID */
+        .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+        .info-row { display:flex; flex-direction:column; gap:3px; }
+        .info-row .key { font-size:0.75rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); }
+        .info-row .val { font-size:1rem; color:var(--text); }
+
+        /* TABLES */
+        table { border-collapse:collapse; width:100%; }
+        thead tr { background:linear-gradient(90deg,#3b82f6,#1d4ed8); }
+        thead th { padding:12px 16px; color:white; font-family:'Cinzel',serif; font-size:0.78rem; letter-spacing:2px; text-align:left; }
+        tbody tr { border-bottom:1px solid var(--border); transition:background 0.2s; }
+        tbody tr:hover { background:#f8f9ff; }
+        tbody td { padding:12px 16px; font-size:0.95rem; color:var(--text); }
+        .overdue-row td { color:var(--red); }
+        .badge { display:inline-block; padding:3px 10px; border-radius:999px; font-size:0.75rem; font-weight:600; }
+        .badge.ok     { background:#dcfce7; color:var(--green); }
+        .badge.overdue{ background:#fee2e2; color:var(--red); }
+        .fine-amount  { color:var(--red); font-weight:700; font-size:1rem; }
+        .fine-zero    { color:var(--green); }
+
+        /* BUTTONS */
+        .btn-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:20px; }
+        .btn { padding:11px 22px; border:none; border-radius:8px; font-family:'Cinzel',serif; font-size:0.82rem; letter-spacing:1.5px; cursor:pointer; transition:all 0.25s; }
+        .btn-pay { background:linear-gradient(135deg,#16a34a,#15803d); color:white; }
+        .btn-pay:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(22,163,74,0.4); }
+        .btn-notify { background:linear-gradient(135deg,#f97316,#ea580c); color:white; }
+        .btn-notify:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(249,115,22,0.4); }
+        .btn-notify:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+
+        #pay-status, #notify-status { margin-top:10px; font-size:0.9rem; padding:8px 14px; border-radius:8px; display:none; }
+        .status-ok   { background:#f0fdf4; border:1px solid #86efac; color:var(--green); }
+        .status-err  { background:#fef2f2; border:1px solid #fca5a5; color:var(--red); }
+        .status-info { background:#eff6ff; border:1px solid #93c5fd; color:#1d4ed8; }
+
+        /* ══════════════════════════════════════
+           DATE SIMULATOR
+        ══════════════════════════════════════ */
+        .date-sim-bar {
+            background: linear-gradient(90deg,#0f172a,#1e293b);
+            border: 1px solid rgba(250,204,21,0.3);
+            border-radius: 12px;
+            padding: 14px 22px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .date-sim-bar .ds-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78rem;
+            letter-spacing: 2px;
+            color: #fbbf24;
+            white-space: nowrap;
+        }
+        .date-sim-bar .ds-hint {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            flex: 1;
+            min-width: 160px;
+        }
+        .date-sim-bar input[type="date"] {
+            background: #0f172a;
+            border: 1px solid rgba(250,204,21,0.4);
+            border-radius: 7px;
+            color: #fde68a;
+            padding: 7px 12px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.82rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .date-sim-bar input[type="date"]:focus {
+            border-color: #fbbf24;
+            box-shadow: 0 0 0 3px rgba(251,191,36,0.15);
+        }
+        .date-sim-bar input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(80%) sepia(60%) saturate(400%) hue-rotate(5deg);
+            cursor: pointer;
+        }
+        .btn-ds-reset {
+            background: rgba(250,204,21,0.12);
+            border: 1px solid rgba(250,204,21,0.3);
+            color: #fbbf24;
+            padding: 7px 16px;
+            border-radius: 7px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-ds-reset:hover {
+            background: rgba(250,204,21,0.22);
+            border-color: #fbbf24;
+        }
+        .ds-active-badge {
+            background: rgba(250,204,21,0.15);
+            border: 1px solid rgba(250,204,21,0.4);
+            color: #fde68a;
+            font-size: 0.72rem;
+            padding: 3px 10px;
+            border-radius: 999px;
+            letter-spacing: 0.5px;
+            display: none;
+            animation: pulse-badge 2s infinite;
+        }
+        .ds-active-badge.show { display: inline-block; }
+        @keyframes pulse-badge {
+            0%,100% { opacity:1; } 50% { opacity:0.6; }
+        }
+
+        /* ══════════════════════════════════════
+           QR PAYMENT MODAL
+        ══════════════════════════════════════ */
+        .modal-overlay {
+            position:fixed; inset:0;
+            background:rgba(0,0,0,0.65);
+            backdrop-filter:blur(4px);
+            display:none;
+            align-items:center;
+            justify-content:center;
+            z-index:999;
+            animation:fadeIn 0.2s ease;
+        }
+        .modal-overlay.open { display:flex; }
+
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+        .modal {
+            background:white;
+            border-radius:20px;
+            padding:36px 40px;
+            max-width:420px;
+            width:90%;
+            text-align:center;
+            box-shadow:0 30px 80px rgba(0,0,0,0.35);
+            position:relative;
+            animation:slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp { from{transform:translateY(30px);opacity:0} to{transform:translateY(0);opacity:1} }
+
+        .modal-close {
+            position:absolute; top:14px; right:18px;
+            background:none; border:none; font-size:1.4rem;
+            cursor:pointer; color:#94a3b8; line-height:1;
+        }
+        .modal-close:hover { color:#1e293b; }
+
+        .modal h3 {
+            font-family:'Cinzel',serif;
+            font-size:1.1rem; letter-spacing:2px;
+            color:#1e293b; margin-bottom:6px;
+        }
+
+        .modal .fine-display {
+            font-family:'Cinzel',serif;
+            font-size:2rem; font-weight:700;
+            color:#dc2626; margin:10px 0 20px;
+        }
+
+        .qr-wrap {
+            background:linear-gradient(135deg,#1e293b,#0f172a);
+            border-radius:16px;
+            padding:20px;
+            display:inline-block;
+            margin-bottom:16px;
+            box-shadow:0 8px 30px rgba(0,0,0,0.2);
+        }
+
+        .qr-wrap img { width:200px; height:200px; display:block; border-radius:8px; }
+
+        .upi-label {
+            font-size:0.82rem; color:#64748b; letter-spacing:1px;
+            margin-bottom:6px;
+        }
+
+        .upi-id {
+            font-family:'Cinzel',serif;
+            font-size:0.95rem; color:#1e293b;
+            background:#f1f5f9; border-radius:8px;
+            padding:8px 16px; margin-bottom:20px;
+            display:inline-block; letter-spacing:1px;
+        }
+
+        .btn-confirm-pay {
+            width:100%; padding:14px;
+            background:linear-gradient(135deg,#16a34a,#15803d);
+            color:white; border:none; border-radius:10px;
+            font-family:'Cinzel',serif; font-size:0.9rem;
+            letter-spacing:2px; cursor:pointer; transition:all 0.25s;
+        }
+        .btn-confirm-pay:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(22,163,74,0.4); }
+
+        .pay-steps {
+            background:#f8fafc; border-radius:10px;
+            padding:12px 16px; margin:16px 0;
+            text-align:left; font-size:0.85rem; color:#475569; line-height:1.9;
+        }
+
+        /* live fine ticker */
+        .fine-ticker {
+            font-size:0.78rem; color:#64748b;
+            margin-top:8px; letter-spacing:0.5px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+    <div class="brand">📚 Amrita Library</div>
+    <div class="nav-links">
+        <a href="main.html">← Back to Catalog</a>
+        <a href="login.html" class="logout" onclick="logout()">Logout</a>
+    </div>
+</nav>
+
+<!-- QR PAYMENT MODAL -->
+<div class="modal-overlay" id="payModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <h3>💳 PAY FINE</h3>
+        <div class="fine-display" id="modalFineAmt">₹0</div>
+
+        <div class="qr-wrap">
+            <img id="qrImg" src="" alt="UPI Payment QR">
+        </div>
+
+        <div class="upi-label">Scan with any UPI app · Pay to</div>
+        <div class="upi-id">gsukesh1579@okaxis</div>
+
+        <div class="pay-steps">
+            1️⃣ Open Google Pay / PhonePe / Paytm / any UPI app<br>
+            2️⃣ Tap <strong>Scan QR</strong> and scan the code above<br>
+            3️⃣ Confirm the amount and pay<br>
+            4️⃣ Click <strong>I Have Paid</strong> below
+        </div>
+
+        <div class="fine-ticker" id="modalTicker"></div>
+
+        <button class="btn-confirm-pay" onclick="confirmPay()">✓ I Have Paid</button>
+    </div>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+
+    <!-- PROFILE HERO -->
+    <div class="profile-hero">
+        <div class="avatar">🎓</div>
+        <div class="profile-info">
+            <h2>TEAM 14</h2>
+            <p>STUDENT1023 · gsukesh1579@gmail.com</p>
+            <div class="profile-badges">
+                <span class="pbadge">📍 Amrita Vishwa Vidyapeetham</span>
+                <span class="pbadge">🏛️ AI &amp; Engineering</span>
+                <span class="pbadge">📅 2026 Batch</span>
+            </div>
+            <div class="live-time" id="liveClock">—</div>
+        </div>
+    </div>
+
+    <!-- DATE SIMULATOR -->
+    <div class="date-sim-bar">
+        <span class="ds-label">🗓 SIMULATE DATE</span>
+        <span class="ds-hint">Change the date to see how fines change over time</span>
+        <input type="date" id="simDateInput" oninput="onSimDateChange()">
+        <button class="btn-ds-reset" onclick="resetSimDate()">↺ Use Today</button>
+        <span class="ds-active-badge" id="dsActiveBadge">⚡ SIMULATED</span>
+    </div>
+
+    <!-- FINE ALERT -->
+    <div class="fine-alert" id="fineAlert" style="display:none">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-text">
+            <strong>OUTSTANDING FINE</strong>
+            <span id="fineAlertMsg"></span>
+        </div>
+    </div>
+
+    <!-- BASIC INFO -->
+    <div class="card">
+        <div class="card-title">👤 Basic Information</div>
+        <div class="info-grid">
+            <div class="info-row"><span class="key">Full Name</span><span class="val">TEAM 14</span></div>
+            <div class="info-row"><span class="key">Student ID</span><span class="val">STUDENT1023</span></div>
+            <div class="info-row"><span class="key">Email</span><span class="val">gsukesh1579@gmail.com</span></div>
+            <div class="info-row"><span class="key">Phone</span><span class="val">9876543210</span></div>
+            <div class="info-row"><span class="key">Department</span><span class="val">Artificial Intelligence &amp; Engineering</span></div>
+            <div class="info-row"><span class="key">Membership</span><span class="val">Active — 2024–2028</span></div>
+        </div>
+    </div>
+
+    <!-- ISSUED BOOKS -->
+    <div class="card">
+        <div class="card-title">📖 Issued Books</div>
+        <table>
+            <thead><tr><th>Book Name</th><th>Issue Date</th><th>Due Date</th><th>Status</th></tr></thead>
+            <tbody id="issuedBody"></tbody>
+        </table>
+    </div>
+
+    <!-- FINE DETAILS -->
+    <div class="card">
+        <div class="card-title">💰 Fine Details <span id="asOf" style="font-size:0.7rem;color:#64748b;font-family:'Crimson Pro',serif;font-weight:400;letter-spacing:1px;margin-left:8px;"></span></div>
+        <table>
+            <thead><tr><th>Book Name</th><th>Due Date</th><th>Overdue Days</th><th>Fine Amount</th></tr></thead>
+            <tbody id="fineBody"></tbody>
+        </table>
+
+        <div class="btn-row">
+            <button class="btn btn-pay"    onclick="openPayModal()">💳 Pay Fine</button>
+            <button class="btn btn-notify" id="notifyBtn" onclick="sendNotification()">📧 Send Email Reminder</button>
+        </div>
+        <div id="pay-status"></div>
+        <div id="notify-status"></div>
+    </div>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   QR image (base64 embedded — no external dependency)
+══════════════════════════════════════════════════════ */
+const QR_B64 = "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";
+
+/* ══════════════════════════════════════════════════════
+   DATE SIMULATOR
+   simDate = null → use real today; set to Date obj to simulate
+══════════════════════════════════════════════════════ */
+let simDate = null;
+
+function getToday() {
+    const d = simDate ? new Date(simDate) : new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+}
+
+function onSimDateChange() {
+    const val = document.getElementById("simDateInput").value;
+    if (!val) { resetSimDate(); return; }
+    simDate = new Date(val + "T00:00:00");
+    document.getElementById("dsActiveBadge").classList.add("show");
+    render();
+}
+
+function resetSimDate() {
+    simDate = null;
+    document.getElementById("simDateInput").value = "";
+    document.getElementById("dsActiveBadge").classList.remove("show");
+    render();
+}
+
+// Pre-fill the date input with today's date as a convenience
+(function initSimInput() {
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth()+1).padStart(2,"0");
+    const d = String(today.getDate()).padStart(2,"0");
+    document.getElementById("simDateInput").value = `${y}-${m}-${d}`;
+})();
+
+/* ══════════════════════════════════════════════════════
+   FINE RATE
+══════════════════════════════════════════════════════ */
+const FINE_RATE = 5; // ₹ per day
+
+/* ══════════════════════════════════════════════════════
+   JS ALGORITHM 1 — LIVE FINE CALCULATOR
+   Fine = max(0, overdueDays × FINE_RATE)
+   Uses simulated date when set, otherwise real clock.
+══════════════════════════════════════════════════════ */
+let ISSUED_BOOKS = [
+    { book_name:"Data Structures",  issue_date:"2026-02-29", due_date:"2026-03-10", returned:false },
+    { book_name:"Operating Systems",issue_date:"2026-02-25", due_date:"2026-03-09", returned:false },
+];
+
+function calcOverdueDays(dueDateStr) {
+    const now     = getToday();
+    const dueDate = new Date(dueDateStr);
+    dueDate.setHours(0,0,0,0);
+    return Math.max(0, Math.floor((now - dueDate) / 86400000));
+}
+
+function calcFine(dueDateStr) {
+    return calcOverdueDays(dueDateStr) * FINE_RATE;
+}
+
+function formatDate(str) {
+    return new Date(str).toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});
+}
+
+/* ══════════════════════════════════════════════════════
+   JS ALGORITHM 2 — RENDER (runs on date change / every second)
+   Recalculates fines using simulated date or today's real date
+══════════════════════════════════════════════════════ */
+function render() {
+    const issuedBody = document.getElementById("issuedBody");
+    const fineBody   = document.getElementById("fineBody");
+    let totalFine    = 0;
+    let fineRows     = "";
+
+    // Issued table
+    issuedBody.innerHTML = ISSUED_BOOKS.map(b => {
+        const days   = b.returned ? 0 : calcOverdueDays(b.due_date);
+        const isOver = days > 0 && !b.returned;
+        return `<tr class="${isOver ? 'overdue-row' : ''}">
+            <td>${b.book_name}</td>
+            <td>${formatDate(b.issue_date)}</td>
+            <td>${formatDate(b.due_date)}</td>
+            <td><span class="badge ${isOver ? 'overdue' : 'ok'}">${isOver ? '⚠ Overdue' : '✓ On Time'}</span></td>
+        </tr>`;
+    }).join("");
+
+    // Fine table
+    ISSUED_BOOKS.forEach(b => {
+        if (b.returned) return;
+        const fine = calcFine(b.due_date);
+        const days = calcOverdueDays(b.due_date);
+        totalFine += fine;
+        fineRows  += `<tr>
+            <td>${b.book_name}</td>
+            <td>${formatDate(b.due_date)}</td>
+            <td>${days > 0 ? `<span style="color:#dc2626">${days} day(s)</span>` : "—"}</td>
+            <td>${fine > 0
+                ? `<span class="fine-amount">₹${fine}</span>`
+                : `<span class="fine-zero">₹0 (On Time)</span>`}</td>
+        </tr>`;
+    });
+
+    // Total row
+    fineRows += `<tr style="font-weight:700;background:#fef2f2;">
+        <td colspan="3" style="text-align:right;font-family:'Cinzel',serif;letter-spacing:1px;font-size:0.9rem;">TOTAL DUE</td>
+        <td class="fine-amount">₹${totalFine}</td>
+    </tr>`;
+
+    fineBody.innerHTML = fineRows;
+    document.getElementById("asOf").textContent =
+        simDate
+        ? `simulated: ${simDate.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"})}`
+        : `as of ${new Date().toLocaleString("en-IN")}`;
+
+    // Fine alert banner
+    const alert = document.getElementById("fineAlert");
+    if (totalFine > 0) {
+        alert.style.display = "flex";
+        document.getElementById("fineAlertMsg").textContent =
+            `You owe ₹${totalFine} in overdue fines. Please return the books and pay.`;
+    } else {
+        alert.style.display = "none";
+    }
+
+    // Update modal amount if open
+    document.getElementById("modalFineAmt").textContent = `₹${totalFine}`;
+    document.getElementById("modalTicker").textContent =
+        totalFine > 0
+        ? `Fine increases by ₹${FINE_RATE} every day after due date.`
+        : "";
+}
+
+/* ══════════════════════════════════════════════════════
+   LIVE CLOCK — updates every second
+══════════════════════════════════════════════════════ */
+function startClock() {
+    function tick() {
+        const now = new Date();
+        document.getElementById("liveClock").textContent =
+            now.toLocaleString("en-IN",{
+                weekday:"short", day:"2-digit", month:"short", year:"numeric",
+                hour:"2-digit", minute:"2-digit", second:"2-digit", hour12:true
+            });
+    }
+    tick();
+    setInterval(tick, 1000);
+}
+
+/* ══════════════════════════════════════════════════════
+   QR MODAL — opens when Pay Fine is clicked
+══════════════════════════════════════════════════════ */
+function openPayModal() {
+    const totalFine = ISSUED_BOOKS
+        .filter(b => !b.returned)
+        .reduce((s, b) => s + calcFine(b.due_date), 0);
+
+    if (totalFine === 0) {
+        const el = document.getElementById("pay-status");
+        el.className = "status-ok";
+        el.textContent = "✓ No outstanding fines!";
+        el.style.display = "block";
+        setTimeout(() => el.style.display = "none", 3000);
+        return;
+    }
+
+    // Set QR image and fine amount
+    document.getElementById("qrImg").src = "data:image/png;base64," + QR_B64;
+    document.getElementById("modalFineAmt").textContent = `₹${totalFine}`;
+    document.getElementById("payModal").classList.add("open");
+}
+
+function closeModal() {
+    document.getElementById("payModal").classList.remove("open");
+}
+
+// Close modal on overlay click
+document.getElementById("payModal").addEventListener("click", function(e) {
+    if (e.target === this) closeModal();
+});
+
+/* ══════════════════════════════════════════════════════
+   CONFIRM PAY — marks books returned, calls backend
+══════════════════════════════════════════════════════ */
+function confirmPay() {
+    closeModal();
+
+    // Mark all returned locally
+    ISSUED_BOOKS.forEach(b => { b.returned = true; });
+    render();
+
+    // Sync with Python backend
+    ISSUED_BOOKS.forEach(b => {
+        fetch("http://localhost:8000/pay_fine", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({student_id:"STUDENT1023", book_name: b.book_name})
+        }).catch(()=>{});
+    });
+
+    const el = document.getElementById("pay-status");
+    el.className    = "status-ok";
+    el.textContent  = "✓ Payment recorded! All books marked as returned.";
+    el.style.display = "block";
+    setTimeout(() => el.style.display = "none", 5000);
+}
+
+/* ══════════════════════════════════════════════════════
+   EMAIL NOTIFICATION
+   Calls Python backend → real email to gsukesh1579@gmail.com
+══════════════════════════════════════════════════════ */
+function sendNotification() {
+    const btn = document.getElementById("notifyBtn");
+    const el  = document.getElementById("notify-status");
+    btn.disabled = true;
+    btn.textContent = "Sending…";
+
+    fetch("http://localhost:8000/notify")
+        .then(r => r.json())
+        .then(() => {
+            el.className    = "status-ok";
+            el.textContent  = "✓ Email sent to gsukesh1579@gmail.com with fine details.";
+        })
+        .catch(() => {
+            el.className    = "status-info";
+            el.textContent  = "📧 Backend offline — start library_backend.py for real email to gsukesh1579@gmail.com.";
+        })
+        .finally(() => {
+            el.style.display = "block";
+            btn.textContent  = "📧 Send Email Reminder";
+            setTimeout(() => { btn.disabled = false; el.style.display = "none"; }, 6000);
+        });
+}
+
+function logout() { sessionStorage.removeItem("loggedUser"); }
+
+/* ══════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════ */
+startClock();
+render();
+
+// Pull live data from Python backend if running
+fetch("http://localhost:8000/profile?student_id=STUDENT1023")
+    .then(r => r.json())
+    .then(data => {
+        if (data.books && data.books.length) {
+            ISSUED_BOOKS = data.books.map(b => ({
+                book_name:  b.book_name,
+                issue_date: b.issue_date,
+                due_date:   b.due_date,
+                returned:   b.returned,
+            }));
+            render();
+        }
+    })
+    .catch(() => {});
+</script>
+</body>
+</html>
