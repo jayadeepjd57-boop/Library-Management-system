@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amrita Library — Catalog</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --primary:   #667eea;
+            --secondary: #764ba2;
+            --maroon:    #800000;
+            --gold:      #c9a84c;
+            --dark:      #0f172a;
+            --slate:     #1e293b;
+            --card-bg:   #ffffff;
+            --text:      #1e293b;
+            --muted:     #64748b;
+            --border:    #e2e8f0;
+            --available: #16a34a;
+            --issued:    #dc2626;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Crimson Pro', Georgia, serif;
+            background: #f0f4ff;
+            color: var(--text);
+        }
+
+        /* ── HEADER ── */
+        .header {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            padding: 0 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+            box-shadow: 0 4px 20px rgba(102,126,234,0.35);
+            position: sticky; top: 0; z-index: 100;
+        }
+
+        .header .logo {
+            font-family: 'Cinzel', serif;
+            color: white;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header .logo span { font-size: 1.6rem; }
+
+        .header nav {
+            display: flex;
+            list-style: none;
+            gap: 6px;
+        }
+
+        .header nav li {
+            color: rgba(255,255,255,0.85);
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .header nav li:hover, .header nav li.active {
+            background: rgba(255,255,255,0.18);
+            color: white;
+        }
+
+        .header nav li.logout-btn {
+            background: rgba(220,38,38,0.3);
+            color: #fca5a5;
+        }
+
+        .header nav li.logout-btn:hover {
+            background: rgba(220,38,38,0.55);
+            color: white;
+        }
+
+        /* ── MAIN LAYOUT ── */
+        .main-wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px 60px;
+        }
+
+        /* ── SECTION TITLES ── */
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.15rem;
+            letter-spacing: 2px;
+            color: var(--text);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+            border-radius: 1px;
+        }
+
+        /* ── SEARCH BOX ── */
+        .search-card {
+            background: white;
+            border-radius: 14px;
+            padding: 24px 28px;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+            border: 1px solid var(--border);
+        }
+
+        .search-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-row input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1rem;
+            color: var(--text);
+            transition: all 0.25s;
+        }
+
+        .search-row input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.12);
+        }
+
+        .search-type {
+            display: flex;
+            gap: 8px;
+        }
+
+        .search-type label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            padding: 11px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.25s;
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102,126,234,0.4);
+        }
+
+        .btn-primary:active { transform: translateY(0); }
+
+        #result-banner {
+            margin-top: 14px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+        }
+
+        #result-banner.success {
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            color: #15803d;
+        }
+
+        #result-banner.error {
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+            color: #dc2626;
+        }
+
+        #result-banner.info {
+            background: #eff6ff;
+            border: 1px solid #93c5fd;
+            color: #1d4ed8;
+        }
+
+        /* ── STATS BAR ── */
+        .stats-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            flex: 1; min-width: 140px;
+            background: white;
+            border-radius: 12px;
+            padding: 18px 22px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-card .num {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: var(--muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .stat-card.blue  .num { color: var(--primary); }
+        .stat-card.green .num { color: var(--available); }
+        .stat-card.red   .num { color: var(--issued); }
+        .stat-card.gold  .num { color: var(--gold); }
+
+        /* ── TABLE ── */
+        .table-wrap {
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+            border: 1px solid var(--border);
+            margin-bottom: 36px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        thead tr {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        thead th {
+            padding: 14px 18px;
+            color: white;
+            text-align: left;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover { background: #f8f9ff; }
+
+        tbody tr.highlight-row {
+            background: #fffbeb !important;
+            box-shadow: inset 3px 0 0 var(--gold);
+            animation: rowPop 0.5s ease;
+        }
+
+        @keyframes rowPop {
+            0%   { transform: scale(1.01); }
+            100% { transform: scale(1); }
+        }
+
+        tbody td {
+            padding: 13px 18px;
+            font-size: 0.98rem;
+            color: var(--text);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .badge.available {
+            background: #dcfce7;
+            color: var(--available);
+        }
+
+        .badge.issued {
+            background: #fee2e2;
+            color: var(--issued);
+        }
+
+        /* ── ADD BOOK FORM ── */
+        .add-card {
+            background: white;
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+            border: 1px solid var(--border);
+        }
+
+        .add-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .add-row .field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .add-row .field label {
+            font-size: 0.78rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .add-row .field input,
+        .add-row .field select {
+            padding: 10px 14px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1rem;
+            color: var(--text);
+            transition: border-color 0.25s;
+        }
+
+        .add-row .field input:focus,
+        .add-row .field select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        #add-status {
+            margin-top: 12px;
+            font-size: 0.9rem;
+            min-height: 20px;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: var(--dark);
+            color: #94a3b8;
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        footer .footer-brand {
+            font-family: 'Cinzel', serif;
+            color: white;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+        }
+
+        footer .footer-links a {
+            color: #60a5fa;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 0.85rem;
+        }
+
+        footer .footer-links a:hover { text-decoration: underline; }
+
+        footer .footer-copy {
+            font-size: 0.78rem;
+            color: #475569;
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+    <div class="logo">
+        <span>📚</span> AMRITA LIBRARY
+    </div>
+    <nav>
+        <li class="active" onclick="scrollToTop()">Home</li>
+        <li onclick="scrollToBooks()">Books</li>
+        <li onclick="window.location.href='profile.html'">Profile</li>
+        <li class="logout-btn" onclick="logout()">Logout</li>
+    </nav>
+</header>
+
+<!-- MAIN -->
+<div class="main-wrap" id="top">
+
+    <!-- STATS -->
+    <div class="stats-row" id="stats-row">
+        <div class="stat-card blue">
+            <span class="num" id="stat-total">10</span>
+            <span class="label">Total Books</span>
+        </div>
+        <div class="stat-card green">
+            <span class="num" id="stat-avail">7</span>
+            <span class="label">Available</span>
+        </div>
+        <div class="stat-card red">
+            <span class="num" id="stat-issued">3</span>
+            <span class="label">Issued</span>
+        </div>
+        <div class="stat-card gold">
+            <span class="num" id="stat-students">1</span>
+            <span class="label">Students</span>
+        </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="search-card">
+        <h2 class="section-title">Search Here</h2>
+        <div class="search-row">
+            <input type="text" id="searchInput" placeholder="Enter Book ID or title / author keyword…">
+            <div class="search-type">
+                <label><input type="radio" name="stype" value="auto" checked> Auto</label>
+                <label><input type="radio" name="stype" value="id">   ID</label>
+                <label><input type="radio" name="stype" value="name"> Title</label>
+            </div>
+            <button class="btn-primary" onclick="smartSearch()">🔍 Search</button>
+            <button class="btn-primary" style="background:linear-gradient(135deg,#475569,#1e293b)" onclick="resetSearch()">✕ Clear</button>
+        </div>
+        <div id="result-banner"></div>
+    </div>
+
+    <!-- BOOK LIST -->
+    <div id="books-section">
+        <h2 class="section-title">Book Catalog</h2>
+        <div class="table-wrap">
+            <table id="bookTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Book Name</th>
+                        <th>Author</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="bookBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ADD BOOK -->
+    <div class="add-card">
+        <h2 class="section-title">Add New Book</h2>
+        <div class="add-row">
+            <div class="field">
+                <label>Book ID</label>
+                <input type="number" id="newId" placeholder="e.g. 111">
+            </div>
+            <div class="field">
+                <label>Book Name</label>
+                <input type="text" id="newName" placeholder="Title of the book">
+            </div>
+            <div class="field">
+                <label>Author</label>
+                <input type="text" id="newAuthor" placeholder="Author name">
+            </div>
+            <div class="field" style="flex:0 0 auto; min-width:140px;">
+                <label>Status</label>
+                <select id="newStatus">
+                    <option value="Available">Available</option>
+                    <option value="Issued">Issued</option>
+                </select>
+            </div>
+            <button class="btn-primary" onclick="addBook()" style="margin-bottom:1px">+ Add Book</button>
+        </div>
+        <p id="add-status"></p>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-brand">AMRITA LIBRARY MANAGEMENT SYSTEM</div>
+    <div class="footer-links">
+        <a href="main.html">Home</a>
+        <a href="#books-section">Books</a>
+        <a href="profile.html">Profile</a>
+        <a href="mailto:library@amrita.edu">Contact</a>
+    </div>
+    <div class="footer-copy">© 2026 Amrita Library. All Rights Reserved.</div>
+</footer>
+
+<script>
+/* ─────────────────────────────────────────────
+   DSA: Binary Search (mirrors library_backend.py)
+   ───────────────────────────────────────────── */
+
+// In-memory book store (hydrated from backend if available)
+let BOOKS = [
+    {id:101, name:"Data Structures",        author:"Mark Allen",           status:"Available"},
+    {id:102, name:"Java Programming",        author:"James Gosling",        status:"Issued"},
+    {id:103, name:"Operating Systems",       author:"Abraham Silberschatz", status:"Available"},
+    {id:104, name:"Computer Networks",       author:"Andrew Tanenbaum",     status:"Available"},
+    {id:105, name:"Database Systems",        author:"Raghu Ramakrishnan",   status:"Issued"},
+    {id:106, name:"Python Programming",      author:"Guido van Rossum",     status:"Available"},
+    {id:107, name:"Machine Learning",        author:"Tom Mitchell",         status:"Available"},
+    {id:108, name:"Artificial Intelligence", author:"Stuart Russell",       status:"Issued"},
+    {id:109, name:"Software Engineering",    author:"Ian Sommerville",      status:"Available"},
+    {id:110, name:"Computer Graphics",                  author:"Donald Hearn",             status:"Available"},
+    {id:111, name:"Discrete Mathematics",              author:"Kenneth Rosen",            status:"Available"},
+    {id:112, name:"Algorithm Design",                  author:"Jon Kleinberg",            status:"Available"},
+    {id:113, name:"Introduction to Algorithms",        author:"Thomas H. Cormen",         status:"Issued"},
+    {id:114, name:"Computer Architecture",             author:"John L. Hennessy",         status:"Available"},
+    {id:115, name:"Digital Logic Design",              author:"Morris Mano",              status:"Available"},
+    {id:116, name:"Theory of Computation",             author:"Michael Sipser",           status:"Available"},
+    {id:117, name:"Compiler Design",                   author:"Alfred Aho",               status:"Issued"},
+    {id:118, name:"Embedded Systems",                  author:"Jonathan Valvano",         status:"Available"},
+    {id:119, name:"Cloud Computing",                   author:"Rajkumar Buyya",           status:"Available"},
+    {id:120, name:"Cyber Security Essentials",         author:"Charles Brooks",           status:"Available"},
+    {id:121, name:"Cryptography and Network Security", author:"William Stallings",        status:"Issued"},
+    {id:122, name:"Deep Learning",                     author:"Ian Goodfellow",           status:"Available"},
+    {id:123, name:"Neural Networks",                   author:"Simon Haykin",             status:"Available"},
+    {id:124, name:"Natural Language Processing",       author:"Daniel Jurafsky",          status:"Available"},
+    {id:125, name:"Computer Vision",                   author:"Richard Szeliski",         status:"Available"},
+    {id:126, name:"Robotics: Modelling and Control",   author:"Mark Spong",               status:"Issued"},
+    {id:127, name:"Internet of Things",                author:"Arshdeep Bahga",           status:"Available"},
+    {id:128, name:"Big Data Analytics",                author:"V.K. Jain",                status:"Available"},
+    {id:129, name:"Data Mining Concepts",              author:"Jiawei Han",               status:"Available"},
+    {id:130, name:"Information Retrieval",             author:"Christopher Manning",      status:"Available"},
+    {id:131, name:"Probability and Statistics",        author:"Sheldon Ross",             status:"Issued"},
+    {id:132, name:"Linear Algebra",                    author:"Gilbert Strang",           status:"Available"},
+    {id:133, name:"Calculus",                          author:"James Stewart",            status:"Available"},
+    {id:134, name:"Numerical Methods",                 author:"S.S. Sastry",              status:"Available"},
+    {id:135, name:"Graph Theory",                      author:"Frank Harary",             status:"Available"},
+    {id:136, name:"Automata Theory",                   author:"John E. Hopcroft",         status:"Issued"},
+    {id:137, name:"Parallel Computing",                author:"Barry Wilkinson",          status:"Available"},
+    {id:138, name:"Distributed Systems",               author:"Andrew Tanenbaum",         status:"Available"},
+    {id:139, name:"Mobile Computing",                  author:"Raj Kamal",                status:"Available"},
+    {id:140, name:"Wireless Networks",                 author:"William Stallings",        status:"Available"},
+    {id:141, name:"Linux Command Line",                author:"William Shotts",           status:"Issued"},
+    {id:142, name:"Unix Programming",                  author:"W. Richard Stevens",       status:"Available"},
+    {id:143, name:"TCP/IP Illustrated",                author:"W. Richard Stevens",       status:"Available"},
+    {id:144, name:"Web Technologies",                  author:"Chris Bates",              status:"Available"},
+    {id:145, name:"JavaScript: The Good Parts",        author:"Douglas Crockford",        status:"Available"},
+    {id:146, name:"Clean Code",                        author:"Robert C. Martin",         status:"Issued"},
+    {id:147, name:"Design Patterns",                   author:"Gang of Four",             status:"Available"},
+    {id:148, name:"Refactoring",                       author:"Martin Fowler",            status:"Available"},
+    {id:149, name:"Agile Software Development",        author:"Robert C. Martin",         status:"Available"},
+    {id:150, name:"The Pragmatic Programmer",          author:"David Thomas",             status:"Available"},
+    {id:151, name:"Code Complete",                     author:"Steve McConnell",          status:"Issued"},
+    {id:152, name:"Head First Design Patterns",        author:"Eric Freeman",             status:"Available"},
+    {id:153, name:"Object Oriented Analysis",          author:"Grady Booch",              status:"Available"},
+    {id:154, name:"UML Distilled",                     author:"Martin Fowler",            status:"Available"},
+    {id:155, name:"System Design Interview",           author:"Alex Xu",                  status:"Available"},
+    {id:156, name:"Database Management Systems",       author:"C.J. Date",                status:"Issued"},
+    {id:157, name:"SQL for Data Analysis",             author:"Cathy Tanimura",           status:"Available"},
+    {id:158, name:"NoSQL Distilled",                   author:"Martin Fowler",            status:"Available"},
+    {id:159, name:"MongoDB: The Definitive Guide",     author:"Kristina Chodorow",        status:"Available"},
+    {id:160, name:"Redis in Action",                   author:"Josiah Carlson",           status:"Available"},
+    {id:161, name:"Elasticsearch in Action",           author:"Radu Gheorghe",            status:"Issued"},
+    {id:162, name:"Kafka: The Definitive Guide",       author:"Neha Narkhede",            status:"Available"},
+    {id:163, name:"Hadoop: The Definitive Guide",      author:"Tom White",                status:"Available"},
+    {id:164, name:"Spark: The Definitive Guide",       author:"Bill Chambers",            status:"Available"},
+    {id:165, name:"Docker Deep Dive",                  author:"Nigel Poulton",            status:"Available"},
+    {id:166, name:"Kubernetes in Action",              author:"Marko Luksa",              status:"Issued"},
+    {id:167, name:"DevOps Handbook",                   author:"Gene Kim",                 status:"Available"},
+    {id:168, name:"Site Reliability Engineering",      author:"Betsy Beyer",              status:"Available"},
+    {id:169, name:"Microservices Patterns",            author:"Chris Richardson",         status:"Available"},
+    {id:170, name:"Building Microservices",            author:"Sam Newman",               status:"Available"},
+    {id:171, name:"RESTful Web APIs",                  author:"Leonard Richardson",       status:"Issued"},
+    {id:172, name:"GraphQL in Action",                 author:"Samer Buna",               status:"Available"},
+    {id:173, name:"Computer Science Distilled",        author:"Wladston Ferreira",        status:"Available"},
+    {id:174, name:"Structure and Interpretation",      author:"Harold Abelson",           status:"Available"},
+    {id:175, name:"The Art of Computer Programming",   author:"Donald Knuth",             status:"Available"},
+    {id:176, name:"Programming Pearls",                author:"Jon Bentley",              status:"Issued"},
+    {id:177, name:"C Programming Language",            author:"Dennis Ritchie",           status:"Available"},
+    {id:178, name:"C++ Primer",                        author:"Stanley Lippman",          status:"Available"},
+    {id:179, name:"Effective C++",                     author:"Scott Meyers",             status:"Available"},
+    {id:180, name:"The Rust Programming Language",     author:"Steve Klabnik",            status:"Available"},
+    {id:181, name:"Go Programming Language",           author:"Alan Donovan",             status:"Issued"},
+    {id:182, name:"Kotlin in Action",                  author:"Dmitry Jemerov",           status:"Available"},
+    {id:183, name:"Swift Programming",                 author:"Apple Inc.",               status:"Available"},
+    {id:184, name:"Learning Python",                   author:"Mark Lutz",                status:"Available"},
+    {id:185, name:"Fluent Python",                     author:"Luciano Ramalho",          status:"Available"},
+    {id:186, name:"Automate the Boring Stuff",         author:"Al Sweigart",              status:"Issued"},
+    {id:187, name:"Python Data Science Handbook",      author:"Jake VanderPlas",          status:"Available"},
+    {id:188, name:"Hands-On Machine Learning",         author:"Aurélien Géron",           status:"Available"},
+    {id:189, name:"Pattern Recognition",               author:"Christopher Bishop",       status:"Available"},
+    {id:190, name:"Reinforcement Learning",            author:"Richard Sutton",           status:"Available"},
+    {id:191, name:"Generative AI Concepts",            author:"David Foster",             status:"Issued"},
+    {id:192, name:"Ethics of Artificial Intelligence", author:"Nick Bostrom",             status:"Available"},
+    {id:193, name:"Human Computer Interaction",        author:"Alan Dix",                 status:"Available"},
+    {id:194, name:"Game Programming Patterns",         author:"Robert Nystrom",           status:"Available"},
+    {id:195, name:"3D Math Primer for Graphics",       author:"Fletcher Dunn",            status:"Available"},
+    {id:196, name:"Quantum Computing",                 author:"Michael Nielsen",          status:"Issued"},
+    {id:197, name:"Blockchain Basics",                 author:"Daniel Drescher",          status:"Available"},
+    {id:198, name:"Digital Transformation",            author:"Thomas Siebel",            status:"Available"},
+    {id:199, name:"The Phoenix Project",               author:"Gene Kim",                 status:"Available"},
+    {id:200, name:"Mythical Man Month",                author:"Frederick Brooks",         status:"Available"},
+    {id:201, name:"Zero to One",                       author:"Peter Thiel",              status:"Issued"},
+    {id:202, name:"The Lean Startup",                  author:"Eric Ries",                status:"Available"},
+    {id:203, name:"Software Testing Fundamentals",     author:"Marnie Hutcheson",         status:"Available"},
+    {id:204, name:"Penetration Testing",               author:"Georgia Weidman",          status:"Available"},
+    {id:205, name:"Network Security Essentials",       author:"William Stallings",        status:"Available"},
+    {id:206, name:"Digital Forensics",                 author:"Eoghan Casey",             status:"Issued"},
+    {id:207, name:"Signals and Systems",               author:"Alan Oppenheim",           status:"Available"},
+    {id:208, name:"Digital Signal Processing",         author:"John Proakis",             status:"Available"},
+    {id:209, name:"VLSI Design",                       author:"Wayne Wolf",               status:"Available"},
+    {id:210, name:"Microprocessors and Microcontrollers", author:"N.K. Maini",            status:"Available"},
+];
+
+// Quicksort by ID
+function quickSort(arr, low = 0, high = arr.length - 1) {
+    if (low < high) {
+        const pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+    return arr;
+}
+
+function partition(arr, low, high) {
+    const pivot = arr[high].id;
+    let i = low - 1;
+    for (let j = low; j < high; j++) {
+        if (arr[j].id <= pivot) { i++; [arr[i], arr[j]] = [arr[j], arr[i]]; }
+    }
+    [arr[i+1], arr[high]] = [arr[high], arr[i+1]];
+    return i + 1;
+}
+
+// Binary search on sorted array
+function binarySearchById(arr, targetId) {
+    const sorted = quickSort([...arr]);
+    let low = 0, high = sorted.length - 1;
+    while (low <= high) {
+        const mid = Math.floor((low + high) / 2);
+        if (sorted[mid].id === targetId) return sorted[mid];
+        else if (sorted[mid].id < targetId) low = mid + 1;
+        else high = mid - 1;
+    }
+    return null;
+}
+
+// Keyword search
+function keywordSearch(arr, q) {
+    q = q.toLowerCase();
+    return arr.filter(b => b.name.toLowerCase().includes(q) || b.author.toLowerCase().includes(q));
+}
+
+/* ─────────────────────────────────────────────
+   RENDER TABLE
+   ───────────────────────────────────────────── */
+function renderTable(books, highlightId = null) {
+    const tbody = document.getElementById("bookBody");
+    tbody.innerHTML = books.map(b => `
+        <tr class="${highlightId === b.id ? 'highlight-row' : ''}">
+            <td>${b.id}</td>
+            <td>${b.name}</td>
+            <td>${b.author}</td>
+            <td><span class="badge ${b.status === 'Available' ? 'available' : 'issued'}">${b.status}</span></td>
+        </tr>
+    `).join("");
+    updateStats(books);
+}
+
+function updateStats(books = BOOKS) {
+    document.getElementById("stat-total").textContent  = BOOKS.length;
+    document.getElementById("stat-avail").textContent  = BOOKS.filter(b => b.status === "Available").length;
+    document.getElementById("stat-issued").textContent = BOOKS.filter(b => b.status === "Issued").length;
+}
+
+/* ─────────────────────────────────────────────
+   SMART SEARCH
+   ───────────────────────────────────────────── */
+function smartSearch() {
+    const query  = document.getElementById("searchInput").value.trim();
+    const stype  = document.querySelector("input[name='stype']:checked").value;
+    const banner = document.getElementById("result-banner");
+
+    if (!query) { showBanner("info", "Please enter a search term."); return; }
+
+    // First try backend (if running)
+    const isId = !isNaN(query) && query !== "";
+
+    if (stype === "id" || (stype === "auto" && isId)) {
+        const book = binarySearchById(BOOKS, parseInt(query));
+        if (book) {
+            renderTable(BOOKS, book.id);
+            showBanner("success",
+                `✓ Book Found via Binary Search — <strong>${book.name}</strong> by ${book.author} [${book.status}]`);
+            // Scroll to the row
+            setTimeout(() => {
+                const highlighted = document.querySelector(".highlight-row");
+                if (highlighted) highlighted.scrollIntoView({ behavior: "smooth", block: "center" });
+            }, 100);
+        } else {
+            renderTable(BOOKS);
+            showBanner("error", `✗ No book found with ID <strong>${query}</strong>.`);
+        }
+    } else {
+        const results = keywordSearch(BOOKS, query);
+        if (results.length > 0) {
+            renderTable(results);
+            showBanner("success", `✓ Found <strong>${results.length}</strong> result(s) for "<strong>${query}</strong>"`);
+        } else {
+            renderTable(BOOKS);
+            showBanner("error", `✗ No books matching "<strong>${query}</strong>".`);
+        }
+    }
+}
+
+function resetSearch() {
+    document.getElementById("searchInput").value = "";
+    document.getElementById("result-banner").style.display = "none";
+    renderTable(BOOKS);
+}
+
+function showBanner(type, html) {
+    const b = document.getElementById("result-banner");
+    b.className = type;
+    b.innerHTML = html;
+    b.style.display = "block";
+}
+
+// Enter key on search
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("searchInput").addEventListener("keydown", e => {
+        if (e.key === "Enter") smartSearch();
+    });
+    renderTable(BOOKS);
+
+    // Try to load from backend
+    fetch("http://localhost:8000/books")
+        .then(r => r.json())
+        .then(data => { BOOKS = data.books; renderTable(BOOKS); })
+        .catch(() => {}); // silently fall back to local data
+});
+
+/* ─────────────────────────────────────────────
+   ADD BOOK
+   ───────────────────────────────────────────── */
+function addBook() {
+    const id     = parseInt(document.getElementById("newId").value);
+    const name   = document.getElementById("newName").value.trim();
+    const author = document.getElementById("newAuthor").value.trim();
+    const status = document.getElementById("newStatus").value;
+    const statusEl = document.getElementById("add-status");
+
+    if (!id || !name || !author) {
+        statusEl.style.color = "#dc2626";
+        statusEl.textContent = "✗ Please fill all fields.";
+        return;
+    }
+
+    if (BOOKS.find(b => b.id === id)) {
+        statusEl.style.color = "#dc2626";
+        statusEl.textContent = `✗ Book ID ${id} already exists.`;
+        return;
+    }
+
+    // Try backend first
+    fetch("http://localhost:8000/add_book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, name, author, status })
+    })
+    .catch(() => {}) // if backend offline, we still add locally
+    .finally(() => {
+        BOOKS.push({ id, name, author, status });
+        renderTable(BOOKS, id);
+        statusEl.style.color = "#16a34a";
+        statusEl.textContent = `✓ "${name}" added successfully!`;
+        document.getElementById("newId").value = "";
+        document.getElementById("newName").value = "";
+        document.getElementById("newAuthor").value = "";
+    });
+}
+
+/* ─────────────────────────────────────────────
+   NAVIGATION
+   ───────────────────────────────────────────── */
+function logout() {
+    sessionStorage.removeItem("loggedUser");
+    window.location.href = "login.html";
+}
+
+function scrollToTop()   { window.scrollTo({top: 0, behavior: "smooth"}); }
+function scrollToBooks() { document.getElementById("books-section").scrollIntoView({behavior:"smooth"}); }
+</script>
+</body>
+</html>
