@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        h1 {
+            color: #f8fafc;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+            text-shadow: 2px 4px 10px rgba(0,0,0,0.3);
+            font-weight: 700;
+        }
+
+        .logininfo {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            width: 320px;
+            text-align: center; 
+            box-shadow: 0px 10px 25px rgba(0,0,0,0.2);
+            border-top: 8px solid #800000;
+        }
+
+        h3 { color: #334155; margin-bottom: 5px; }
+
+        input {
+            margin-bottom: 15px;
+            padding: 10px;
+            width: 85%;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #800000;
+            box-shadow: 0 0 5px rgba(128, 0, 0, 0.2);
+        }
+
+        .button {
+            background-color: #800000; 
+            color: white;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-weight: bold;
+            width: 95%;
+            cursor: pointer;
+            border: none;
+            transition: background 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #a00000;
+            box-shadow: 0px 4px 12px rgba(128, 0, 0, 0.3);
+        }
+
+        label {
+            font-family: 'Segoe UI', sans-serif;
+            color: #475569;
+            font-size: 0.9rem;
+            display: block;
+            margin-bottom: 5px;
+            text-align: left;
+            margin-left: 7%;
+        }
+
+        img {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 220px;
+            filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.2));
+        }
+
+        .pwd-wrap {
+            position: relative;
+            width: 85%;
+            margin: 0 auto 15px;
+        }
+
+        .pwd-wrap input {
+            width: 100%;
+            margin-bottom: 0;
+            padding-right: 36px;
+        }
+
+        .eye-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #94a3b8;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .err-msg {
+            color: #dc2626;
+            font-size: 0.78rem;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .reg-link {
+            margin-top: 14px;
+            font-size: 0.82rem;
+            color: #64748b;
+        }
+
+        .reg-link a {
+            color: #800000;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .reg-link a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <img src="c:\Users\jayad\Downloads\Amrita-vishwa-vidyapeetham-color-logo.webp" alt="amrita logo">
+
+    <h1>LIBRARY MANAGEMENT SYSTEM</h1>
+
+    <form class="logininfo" onsubmit="return false;">
+        <h3><strong>Login Info</strong></h3>
+        <p style="color: #64748b; font-size: 14px;">Please enter your login details to continue</p>
+
+        <label for="loginid">Login ID</label>
+        <input type="text" id="loginid" placeholder="Enter ID">
+
+        <label for="Password">Password</label>
+        <div class="pwd-wrap">
+            <input type="password" id="Password" placeholder="Enter password" autocomplete="current-password">
+            <button class="eye-btn" type="button" onclick="toggleEye()" id="eyeBtn">👁</button>
+        </div>
+
+        <div class="err-msg" id="errMsg">Invalid Login ID or Password.</div>
+
+        <button class="button" type="button" onclick="handleLogin()">Login</button>
+
+        <div class="reg-link">
+            Don't have an account? <a href="register.html">Register here</a>
+        </div>
+    </form>
+
+    <p style="color: rgba(255,255,255,0.6); text-align: end; font-size: 13px; position: absolute; bottom: 10px; right: 20px;">
+        © 2026 | Amrita Vishwa Vidyapeetham
+    </p>
+
+<script>
+function handleLogin() {
+    const id  = document.getElementById("loginid").value.trim();
+    const pwd = document.getElementById("Password").value;
+    const err = document.getElementById("errMsg");
+
+    const users = JSON.parse(localStorage.getItem("lms_users") || "[]");
+    const DEMO  = [{ loginId: "STUDENT1023", password: "Amrita@123" }];
+    const all   = [...DEMO, ...users];
+
+    const match = all.find(u => u.loginId === id && u.password === pwd);
+
+    if (match) {
+        sessionStorage.setItem("loggedUser", id);
+        err.style.display = "none";
+        window.location.href = "main.html";
+    } else {
+        err.style.display = "block";
+    }
+}
+
+function toggleEye() {
+    const inp = document.getElementById("Password");
+    const btn = document.getElementById("eyeBtn");
+    if (inp.type === "password") { inp.type = "text";     btn.textContent = "🙈"; }
+    else                         { inp.type = "password"; btn.textContent = "👁";  }
+}
+
+document.addEventListener("keydown", e => { if (e.key === "Enter") handleLogin(); });
+</script>
+</body>
+</html>
